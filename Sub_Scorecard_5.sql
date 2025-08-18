@@ -1,6 +1,9 @@
 -- 5.3
 
+CREATE TABLE WH_COUNTS_5_3
+AS
 
+-- 8 month back 
 SELECT 
 RUN_DATE, 
 CDE_ENTITY_MODEL, 
@@ -12,6 +15,7 @@ WH_MON,
 SUM(TOTAL_RECS) AS EIGHT_MON_RECS
 FROM (
 
+-- sum DOS records
 SELECT 
 RUN_DATE, 
 CDE_ENTITY_MODEL, 
@@ -24,6 +28,7 @@ DOS_MON,
 COUNT(ENC_CLAIM_NO||ENC_CLAIM_SUFFIX) AS TOTAL_RECS
 FROM (
 
+-- core 
 SELECT
 --TO_DATE('20250225','YYYYMMDD') AS RUN_DATE,
 CURRENT_DATE() AS RUN_DATE,
@@ -41,7 +46,7 @@ CURRENT_DATE() AS RUN_DATE,
          left join mhteam.dwdq.INF_B_MCE_PIDSL_CROSSWALK cw on cw.mco = e.cde_enc_mco and cw.aco = e.cde_enc_aco            
          WHERE e.dos_from_dt >= '01-JAN-2022'
          AND e.IND_OFFSET = 'N'
-and E.CDE_ENC_ACO = 'BMC-BACO'
+--and E.CDE_ENC_ACO = 'BMC-BACO'
 
 )
 GROUP BY RUN_DATE, 

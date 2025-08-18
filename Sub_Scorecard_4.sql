@@ -9,7 +9,7 @@ DROP VIEW WH_COUNTS
 
 CREATE VIEW WH_COUNTS
 AS 
-SELECT tw.*, th.EIGHT_MON_RECS 
+SELECT tw.*, th.EIGHT_MON_RECS, th.EIGHT_MON_PAID 
 FROM WH_COUNTS_5_2 tw
 JOIN WH_COUNTS_5_3 th
 ON tw.ENTITY_PIDSL = th.ENTITY_PIDSL AND tw.WH_MON = th.WH_MON
@@ -22,6 +22,8 @@ WHERE CLAIM_MCE = 'BMC';
 SELECT * FROM WH_COUNTS_5_3
 WHERE CLAIM_MCE = 'BMC';
 
+
+DROP TABLE WH_COUNTS_5_2;
 
 -- Calc Percent - can also do in Tableau
 CREATE TABLE WH_COUNTS_5_2
@@ -151,7 +153,7 @@ CURRENT_DATE() AS RUN_DATE,
          left join mhteam.dwdq.INF_B_MCE_PIDSL_CROSSWALK cw on cw.mco = e.cde_enc_mco and cw.aco = e.cde_enc_aco            
          WHERE e.dos_from_dt >= '01-JAN-2022'
          AND e.IND_OFFSET = 'N'
-and E.CDE_ENC_ACO = 'BMC-BACO'
+--and E.CDE_ENC_ACO = 'BMC-BACO'
 )
 GROUP BY RUN_DATE, 
          CDE_ENTITY_MODEL, 

@@ -1,152 +1,19 @@
--- March 31, 2025 
--- Tables running MH_Submissions_Dashboard6
--- Incorportating PIDSL lookup table
-
-/*
--------------
-DROP TABLE MCE_PIDSL_CROSSWALK;
-TRUNCATE TABLE MCE_PIDSL_CROSSWALK;
-
-CREATE TABLE MCE_PIDSL_CROSSWALK
-(
-MCE_GROUP            VARCHAR(10),
-MCE_NUM              INTEGER,
-CDE_ENTITY_MODEL     VARCHAR(5),
-MCO                  VARCHAR(5),
-MCO_CURRENT          VARCHAR(5),
-ACO                  VARCHAR(20),
-ACO_CURRENT          VARCHAR(20),
-ENTITY_PIDSL         VARCHAR(20),
-ENTITY_NAME          VARCHAR(100),
-ORG                  VARCHAR(100)
-);
-
-
-select * from MCE_PIDSL_CROSSWALK
-order by MCE_NUM;
-
---alter table mhteam.dwdq.MCE_PIDSL_CROSSWALK rename to mhteam.dwdq.INF_B_MCE_PIDSL_CROSSWALK;
-
---create table mhteam.dwdq.INF_B_MCE_PIDSL_CROSSWALK as select * from mhteam.dwdq.MCE_PIDSL_CROSSWALK;
---drop table mhteam.dwdq.MCE_PIDSL_CROSSWALK;
-
-
--- DOS_ACO_AVG_PCT
-
-DROP TABLE DOS_ACO_COUNTS_6;
-
-CREATE TABLE DOS_ACO_COUNTS_6
-(
-RUN_DATE            DATE,
-DOS_MON             VARCHAR(4),
-CLAIM_MCE           VARCHAR(10),
-CLAIM_ACO_MCE       VARCHAR(10),
-CDE_ENTITY_MODEL    VARCHAR(10), 
-ENTITY_PIDSL        VARCHAR(20),
-ENTITY_NAME         VARCHAR(100),
-CDE_CLM_TYPE        VARCHAR(1),
-CDE_CLM_DISPOSITION VARCHAR(2),
-RECORD_COUNT        INTEGER
-)
-AS
-SELECT RUN_DATE, DOS_MON, CLAIM_MCE, CLAIM_ACO_MCE, CDE_ENTITY_MODEL, ENTITY_PIDSL, ENTITY_NAME, CDE_CLM_TYPE, CDE_CLM_DISPOSITION, count(CDE_CLM_DISPOSITION)
-FROM (
-SELECT
-CURRENT_DATE() AS RUN_DATE,
---TO_DATE('20250225','YYYYMMDD') AS RUN_DATE,
-                 E.CDE_ENC_MCO AS CLAIM_MCE,
-                 CASE WHEN E.CDE_ENC_ACO in('#','+','-') THEN E.CDE_ENC_MCO ELSE E.CDE_ENC_ACO END AS CLAIM_ACO_MCE,
-                 cw.CDE_ENTITY_MODEL, 
-                 cw.ENTITY_PIDSL,
-                 cw.ENTITY_NAME,
-                 CDE_CLM_TYPE,
-                 CDE_CLM_DISPOSITION,
-                 TO_CHAR(DOS_FROM_DT,'YYMM') AS DOS_MON
-         FROM mhdwprod.nw.nw_encounter_hist e
-         left join mhteam.dwdq.INF_B_MCE_PIDSL_CROSSWALK cw on cw.mco = e.cde_enc_mco and cw.aco = e.cde_enc_aco   
-         WHERE e.dos_from_dt >= '01-JAN-2020'
-         AND e.IND_OFFSET = 'N'
-         --AND CDE_ENC_ACO = 'BMC-BACO'
-
-)
-GROUP BY RUN_DATE, DOS_MON, CLAIM_MCE, CLAIM_ACO_MCE, CDE_ENTITY_MODEL, ENTITY_PIDSL, ENTITY_NAME, CDE_CLM_TYPE, CDE_CLM_DISPOSITION
-ORDER BY RUN_DATE, DOS_MON, CLAIM_MCE, CLAIM_ACO_MCE, CDE_ENTITY_MODEL, ENTITY_PIDSL, ENTITY_NAME, CDE_CLM_TYPE, CDE_CLM_DISPOSITION;
-
-
-SELECT * FROM DOS_ACO_COUNTS_6;
-*/
--- clean up the crosswalk
-/*
-
-select distinct cw.mco, cw.aco, e.cde_enc_mco, e.cde_enc_aco 
-from mhteam.dwdq.INF_B_MCE_PIDSL_CROSSWALK cw
-left join mhdwprod.nw.nw_encounter_hist e on cw.mco = e.cde_enc_mco and cw.aco = e.cde_enc_aco
---where e.cde_enc_aco is null
-order by cw.mco, cw.aco, e.cde_enc_mco, e.cde_enc_aco;
-
-select distinct e.cde_enc_mco, e.cde_enc_aco 
-from mhdwprod.nw.nw_encounter_hist e
-where cde_enc_aco in ('CCC', 'NHP', 'REV', 'STW');
-
---'MBH' 'CCC'
---'MBH' 'REV'
-
-select distinct e.cde_enc_mco, e.cde_enc_aco 
-from mhdwprod.nw.nw_encounter_hist e
-where cde_enc_mco in ('CCC', 'NHP', 'REV', 'STW');
-
-select distinct e.cde_enc_mco, e.cde_enc_aco 
-from mhdwprod.nw.nw_encounter_hist e
-where cde_enc_aco like ('STEW%')
-
---'MBH' 'STEWARD'
-
-select distinct e.cde_enc_mco, e.cde_enc_aco 
-from mhdwprod.nw.nw_encounter_hist e
-where cde_enc_mco in ('MBH')
-
---'MBH' 'CCC'
---'MBH' 'REV'
---'MBH' 'STEWARD'
---'MBH' 'PHACO'
---'MBH' 'MGBACO'
-
-select * from mhteam.dwdq.INF_B_MCE_PIDSL_CROSSWALK;
-
-update mhteam.dwdq.INF_B_MCE_PIDSL_CROSSWALK
-set MCO_CURRENT = 'MBH'
-where ACO IN ('CCC', 'STEWARD', 'REV', 'MGBACO')
-
-update mhteam.dwdq.INF_B_MCE_PIDSL_CROSSWALK
-set ACO_CURRENT = 'REV'
-where ACO IN ('REV')
-*/
-
-
-
-
-
+-- 7/16/2025
+-- use crosswalk MOC and ACO
 
 -- Averages and SD
-
-
-
-
--- Dived months by avg
 
 
 SELECT * FROM INF_B_SUB_DASH_WH_DOS_ACO_AVG_PCT
 order by CLAIM_ACO_MCE, DOS_MON
 ;
 
---DROP TABLE DOS_ACO_AVG_PCT_6;
-
 --DROP VIEW INF_B_SUB_DASH_WH_DOS_ACO_AVG_PCT
-
---CREATE TABLE DOS_ACO_AVG_PCT_6
 
 SELECT *
 FROM INF_B_SUB_DASH_WH_DOS_ACO_AVG_PCT;
+
+-- This is used in Tableau Heatmap Dashboard
 
 CREATE VIEW INF_B_SUB_DASH_WH_DOS_ACO_AVG_PCT
 
@@ -176,33 +43,12 @@ ORDER BY RUN_DATE, DOS_MON, CLAIM_MCE, CLAIM_ACO_MCE;
 
 
 -------------------
---select * from DOS_ACO_COUNTS_6 limit 10;
 
 
 SELECT * FROM INF_B_SUB_DASH_WH_DOS_ACO_AVG_SD
 order by CLAIM_ACO_MCE
 ;
 
---DROP TABLE DOS_ACO_AVG_PCT_6;
-
---DROP VIEW INF_B_SUB_DASH_WH_DOS_ACO_AVG_SD;
-
-
---DROP TABLE DOS_ACO_AVG_SD_6;
-
-/*
---CREATE TABLE DOS_ACO_AVG_SD_6
-(
-RUN_DATE         DATE,
-CLAIM_MCE        VARCHAR(10),
-CLAIM_ACO_MCE    VARCHAR(10),
-CDE_ENTITY_MODEL VARCHAR(10), 
-ENTITY_PIDSL     VARCHAR(20),
-ENTITY_NAME      VARCHAR(100),
-AVG_RECS         INTEGER,
-SD_RECS          INTEGER 
-)
-*/
 
 CREATE VIEW INF_B_SUB_DASH_WH_DOS_ACO_AVG_SD
 
@@ -226,11 +72,6 @@ ORDER BY CLAIM_MCE;
 
 -- DOS and WH
 
-CREATE TABLE INF_B_SUB_DASH_WH_DOS_ACO_COUNTS
-AS
-SELECT *
-FROM WH_DOS_ACO_COUNTS_6;
-
 
 SELECT *
 FROM INF_B_SUB_DASH_WH_DOS_ACO_COUNTS;
@@ -243,25 +84,9 @@ TRUNCATE TABLE MHTEAM.DWDQ.INF_B_SUB_DASH_WH_DOS_ACO_COUNTS;
 UPDATE MHTEAM.DWDQ.INF_B_SUB_DASH_WH_DOS_ACO_COUNTS
 SET RUN_DATE = TO_DATE('20250301','YYYYMMDD');  
 
-/*
-DROP TABLE WH_DOS_ACO_COUNTS_6;
 
-CREATE TABLE WH_DOS_ACO_COUNTS_6
-(
-RUN_DATE            DATE,
-WH_MON              VARCHAR(4),
-DOS_MON             VARCHAR(4),
-CLAIM_MCE           VARCHAR(10),
-CLAIM_ACO_MCE       VARCHAR(10),
-CDE_ENTITY_MODEL    VARCHAR(10), 
-ENTITY_PIDSL        VARCHAR(20),
-ENTITY_NAME         VARCHAR(100),
-CDE_CLM_TYPE        VARCHAR(1),
-CDE_CLM_DISPOSITION VARCHAR(2),
-RECORD_COUNT        INTEGER
-)
-AS
-*/
+-- This is used in Tableau Lag Triangle and Submission Source
+-- and in AVG_PCT above
 
 INSERT INTO MHTEAM.DWDQ.INF_B_SUB_DASH_WH_DOS_ACO_COUNTS
 
@@ -270,8 +95,9 @@ FROM (
 SELECT
 --TO_DATE('20250225','YYYYMMDD') AS RUN_DATE,
 CURRENT_DATE() AS RUN_DATE,
-                 E.CDE_ENC_MCO AS CLAIM_MCE,
-                 CASE WHEN E.CDE_ENC_ACO in('#','+','-') THEN E.CDE_ENC_MCO ELSE E.CDE_ENC_ACO END AS CLAIM_ACO_MCE,
+                 cw.MCO_CURRENT AS CLAIM_MCE,
+                 CASE WHEN cw.ACO_CURRENT in('#','+','-') 
+                     THEN cw.MCO_CURRENT ELSE cw.ACO_CURRENT END AS CLAIM_ACO_MCE,
                  cw.CDE_ENTITY_MODEL, 
                  cw.ENTITY_PIDSL,
                  cw.ENTITY_NAME,
@@ -291,40 +117,7 @@ SELECT * FROM WH_DOS_ACO_COUNTS_6 limit 10;
 
 --------------
 
--- Drill through from file stats using From_Service_Date for DOS
--- From_Service_Date
---DROP TABLE FILE_DOS_COUNTS_6;
-TRUNCATE TABLE FILE_DOS_COUNTS_6;
-
-CREATE TABLE INF_B_SUB_DASH_FILE_DOS_COUNTS
-AS
-SELECT * FROM FILE_DOS_COUNTS_6;
-
-/*
-CREATE TABLE FILE_DOS_COUNTS_6
-(
-RUN_DATE               DATE,
-MCO                    VARCHAR(10),
-ACO                    VARCHAR(10),
-CDE_ENTITY_MODEL       VARCHAR(10), 
-ENTITY_PIDSL           VARCHAR(20),
-ENTITY_NAME            VARCHAR(100),
-ID                     VARCHAR(10),
-FILE_NAME              VARCHAR(100),
-METADATA_DATE_CREATED  DATE,
-DATE_FILE_PROCESSED    DATE,
-MANUAL_OVERRIDE        VARCHAR(1),
-AMENDMENT              VARCHAR(1),
-METADATA_TOTAL_RECORDS NUMBER(10),
-LOADED_RECORD_COUNT    NUMBER(10),
-ERROR_RECORD_COUNT     NUMBER(10),
-METADATA_TOTAL_PAYMENTS NUMBER(15,2),
-DOS_MON                VARCHAR(4),
-RECORD_TYPE            VARCHAR(1),
-RECORD_COUNT           NUMBER(10)
-)
-AS
-*/
+-- This is used in Tableau Submission Files
 
 TRUNCATE TABLE MHTEAM.DWDQ.INF_B_SUB_DASH_FILE_DOS_COUNTS;
 
@@ -381,14 +174,13 @@ SELECT
 FROM (
 SELECT --distinct
 CURRENT_DATE() AS RUN_DATE,
---TO_DATE('20250225','YYYYMMDD') AS RUN_DATE,
-       CASE
-         WHEN stat.cde_enc_mco = 'TFT' THEN 'CHA'  
-         ELSE stat.cde_enc_mco
-       END AS cde_enc_mco,
-       CASE WHEN enc.CDE_ENC_ACO in('#','+','-') THEN enc.CDE_ENC_MCO ELSE enc.CDE_ENC_ACO END AS CLAIM_ACO_MCE,
-       CDE_ENTITY_MODEL, cw.ENTITY_PIDSL, ENTITY_NAME,
-       --stat.cde_enc_mco,
+
+       cw.MCO_CURRENT AS cde_enc_mco,
+       CASE WHEN cw.ACO_CURRENT in('#','+','-') 
+            THEN cw.MCO_CURRENT ELSE cw.ACO_CURRENT END AS CLAIM_ACO_MCE,
+       CDE_ENTITY_MODEL, 
+       cw.ENTITY_PIDSL, 
+       ENTITY_NAME,
        zip_file_name,
        metadata_date_created,
        metadata_total_records,
@@ -414,8 +206,10 @@ on enc.md_batch_seq=stat.md_batch_seq_ods and stat.cde_enc_mco=enc.cde_enc_mco
 left join mhteam.dwdq.INF_B_MCE_PIDSL_CROSSWALK cw on cw.mco = enc.cde_enc_mco and cw.aco = enc.cde_enc_aco            
 where 1=1
 and metadata_date_created between 
-TO_CHAR(ADD_MONTHS(TRUNC(TO_DATE('20250331','YYYYMMDD'),'MONTH'), -5)) AND
-TO_CHAR(LAST_DAY(TRUNC(TO_DATE('20250331','YYYYMMDD'),'MONTH'))) --rolling history of 6months
+--TO_CHAR(ADD_MONTHS(TRUNC(TO_DATE('20250331','YYYYMMDD'),'MONTH'), -5)) AND
+--TO_CHAR(LAST_DAY(TRUNC(TO_DATE('20250331','YYYYMMDD'),'MONTH'))) --rolling history of 6months
+TO_CHAR(ADD_MONTHS(TRUNC(RUN_DATE,'MONTH'), -11)) AND
+TO_CHAR(LAST_DAY(TRUNC(RUN_DATE,'MONTH'))) --rolling history of 12months
 --order by cde_enc_mco, metadata_date_created desc
 ) t
 ) u
@@ -441,5 +235,6 @@ GROUP BY
 ORDER BY RUN_DATE, mco, metadata_date_created, DOS_MON, RECORD_TYPE;
 
 
-SELECT * FROM FILE_DOS_COUNTS_6 LIMIT 10;
+SELECT * FROM INF_B_SUB_DASH_FILE_DOS_COUNTS 
+LIMIT 10;
 

@@ -135,7 +135,6 @@ where CLAIM_ACO_MCE is null;
 SELECT DISTINCT RUN_DATE
 FROM INF_B_SUB_DASH_WH_DOS_ACO_COUNTS;
 
-TRUNCATE TABLE MHTEAM.DWDQ.INF_B_SUB_DASH_WH_DOS_ACO_COUNTS;
 
 UPDATE MHTEAM.DWDQ.INF_B_SUB_DASH_WH_DOS_ACO_COUNTS
 SET RUN_DATE = TO_DATE('20250301','YYYYMMDD');  
@@ -144,12 +143,14 @@ SET RUN_DATE = TO_DATE('20250301','YYYYMMDD');
 -- This is used in Tableau Lag Triangle and Submission Source
 -- and in AVG_PCT above
 
+TRUNCATE TABLE MHTEAM.DWDQ.INF_B_SUB_DASH_WH_DOS_ACO_COUNTS;
+
+
 INSERT INTO MHTEAM.DWDQ.INF_B_SUB_DASH_WH_DOS_ACO_COUNTS
 
 SELECT RUN_DATE, WH_MON, DOS_MON, CLAIM_MCE, CLAIM_ACO_MCE, CDE_ENTITY_MODEL, ENTITY_PIDSL, ENTITY_NAME, CDE_CLM_TYPE, CDE_CLM_DISPOSITION, count(CDE_CLM_DISPOSITION)
 FROM (
 SELECT
---TO_DATE('20250225','YYYYMMDD') AS RUN_DATE,
 CURRENT_DATE() AS RUN_DATE,
                  cw.MCO_CURRENT AS CLAIM_MCE,
                  CASE WHEN cw.ACO_CURRENT in('#','+','-') 
@@ -165,7 +166,6 @@ CURRENT_DATE() AS RUN_DATE,
          left join mhteam.dwdq.INF_B_MCE_PIDSL_CROSSWALK cw on cw.mco = e.cde_enc_mco and cw.aco = e.cde_enc_aco            
          WHERE e.dos_from_dt >= '01-JAN-2022'
          AND e.IND_OFFSET = 'N'
-         AND e.CDE_ENC_ACO != 'LAHEY'
 )
 GROUP BY RUN_DATE, WH_MON, DOS_MON, CLAIM_MCE, CLAIM_ACO_MCE, CDE_ENTITY_MODEL, ENTITY_PIDSL, ENTITY_NAME, CDE_CLM_TYPE, CDE_CLM_DISPOSITION
 ORDER BY RUN_DATE, WH_MON, DOS_MON, CLAIM_MCE, CLAIM_ACO_MCE, CDE_ENTITY_MODEL, ENTITY_PIDSL, ENTITY_NAME, CDE_CLM_TYPE, CDE_CLM_DISPOSITION;
@@ -176,9 +176,18 @@ SELECT * FROM WH_DOS_ACO_COUNTS_6 limit 10;
 
 -- This is used in Tableau Submission Files
 
-TRUNCATE TABLE MHTEAM.DWDQ.INF_B_SUB_DASH_FILE_DOS_COUNTS;
+SELECT * FROM MHTEAM.DWDQ.INF_B_SUB_DASH_FILE_DOS_COUNTS 
+WHERE MCO IS NULL
+LIMIT 10;
 
-SELECT * FROM MHTEAM.DWDQ.INF_B_SUB_DASH_FILE_DOS_COUNTS LIMIT 10;
+select *
+from mhdwprod.nw.nw_enc_statistics stat
+inner join mhdwprod.nw.ods_encounter enc
+on enc.md_batch_seq=stat.md_batch_seq_ods and stat.cde_enc_mco=enc.cde_enc_mco
+where zip_file_name = 'hne_claims_20240809.zip';
+
+
+TRUNCATE TABLE MHTEAM.DWDQ.INF_B_SUB_DASH_FILE_DOS_COUNTS;
 
 SELECT DISTINCT RUN_DATE 
 FROM MHTEAM.DWDQ.INF_B_SUB_DASH_FILE_DOS_COUNTS LIMIT 10;
@@ -229,7 +238,7 @@ SELECT
        DOS_MON,
        record_type
 FROM (
-SELECT --distinct
+SELECT
 CURRENT_DATE() AS RUN_DATE,
 
        cw.MCO AS cde_enc_mco,
@@ -265,8 +274,6 @@ where 1=1
 and metadata_date_created between 
 TO_CHAR(ADD_MONTHS(TRUNC(RUN_DATE,'MONTH'), -11)) AND
 TO_CHAR(LAST_DAY(TRUNC(RUN_DATE,'MONTH'))) --rolling history of 12months
-AND enc.cde_enc_aco != 'LAHEY'
---order by cde_enc_mco, metadata_date_created desc
 ) t
 ) u
 GROUP BY

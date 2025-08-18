@@ -1,0 +1,85 @@
+INSERT INTO MHTEAM.DWDQ.INF_B_SUB_DASH_KPI_COUNTS_5_3
+
+SELECT 
+RUN_DATE, 
+CDE_ENTITY_MODEL, 
+ENTITY_PIDSL, 
+ENTITY_NAME,
+ORG,
+CLAIM_MCE, 
+CLAIM_ACO_MCE, 
+WH_MON, 
+CDE_CLM_TYPE,
+CDE_CLM_DISPOSITION,
+SUM(TOTAL_RECS) AS EIGHT_MON_RECS,
+SUM(TOTAL_PAID) AS EIGHT_MON_PAID
+FROM (
+
+-- sum DOS records
+SELECT 
+RUN_DATE, 
+CDE_ENTITY_MODEL, 
+ENTITY_PIDSL, 
+ENTITY_NAME,
+ORG,
+CLAIM_MCE, 
+CLAIM_ACO_MCE, 
+WH_MON, 
+DOS_MON, 
+CDE_CLM_TYPE,
+CDE_CLM_DISPOSITION,
+COUNT(ENC_CLAIM_NO||ENC_CLAIM_SUFFIX) AS TOTAL_RECS,
+SUM(AMT_PAID) AS TOTAL_PAID
+FROM (
+
+-- core 
+SELECT
+CURRENT_DATE() AS RUN_DATE,
+                 cw.CDE_ENTITY_MODEL, 
+                 cw.ENTITY_PIDSL,
+                 cw.ENTITY_NAME,
+                 cw.ORG,
+                 cw.MCO_CURRENT AS CLAIM_MCE,
+                 CASE WHEN cw.ACO_CURRENT in('#','+','-') 
+                     THEN cw.MCO_CURRENT ELSE cw.ACO_CURRENT END AS CLAIM_ACO_MCE,
+                 ENC_CLAIM_NO,
+                 ENC_CLAIM_SUFFIX,
+                 TO_CHAR(DOS_FROM_DT,'YYMM') AS DOS_MON,
+                 TO_CHAR(WH_FROM_DT,'YYMM') AS WH_MON,
+                 AMT_PAID,
+                 CDE_CLM_TYPE,
+                 CDE_CLM_DISPOSITION
+                 FROM mhdwprod.nw.nw_encounter_hist e
+         left join mhteam.dwdq.INF_B_MCE_PIDSL_CROSSWALK cw on cw.mco = e.cde_enc_mco and cw.aco = e.cde_enc_aco            
+         WHERE e.dos_from_dt >= '01-JAN-2022'
+         AND e.IND_OFFSET = 'N'
+
+)
+GROUP BY RUN_DATE, 
+         CDE_ENTITY_MODEL, 
+         ENTITY_PIDSL, 
+         ENTITY_NAME,
+         ORG,
+         CLAIM_MCE, 
+         CLAIM_ACO_MCE, 
+         WH_MON, 
+         DOS_MON,
+         CDE_CLM_TYPE,
+         CDE_CLM_DISPOSITION
+HAVING DOS_MON < TO_CHAR(DATEADD(month, -7, TO_DATE(WH_MON,'YYMM')),'YYMM')
+
+ORDER BY RUN_DATE, CDE_ENTITY_MODEL, ENTITY_PIDSL, ENTITY_NAME, CLAIM_MCE, CLAIM_ACO_MCE, WH_MON DESC , DOS_MON DESC
+
+)
+GROUP BY RUN_DATE, 
+         CDE_ENTITY_MODEL, 
+         ENTITY_PIDSL, 
+         ENTITY_NAME,
+         ORG,
+         CLAIM_MCE, 
+         CLAIM_ACO_MCE, 
+         WH_MON,
+         CDE_CLM_TYPE,
+         CDE_CLM_DISPOSITION
+ORDER BY RUN_DATE, CDE_ENTITY_MODEL, ENTITY_PIDSL, ENTITY_NAME, CLAIM_MCE, CLAIM_ACO_MCE, WH_MON DESC
+;

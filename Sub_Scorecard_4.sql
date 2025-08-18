@@ -23,7 +23,7 @@ SELECT * FROM WH_COUNTS_5_3
 WHERE CLAIM_MCE = 'BMC';
 
 
--- Percent
+-- Calc Percent - can also do in Tableau
 CREATE TABLE WH_COUNTS_5_2
 AS
 
@@ -49,8 +49,7 @@ CASE
 END AS DOS_PAID_3MON_PCT 
 FROM (
 
--- rolling average 12 months over 3MON DOS
-
+-- rolling WH MON average 12 months over 3 MON DOS
 SELECT 
 RUN_DATE, 
 CDE_ENTITY_MODEL, 
@@ -75,8 +74,7 @@ DOS_PAID_3MON,
         ROWS BETWEEN 11 PRECEDING AND CURRENT ROW) AS DOS_PAID_3MON_12_MNTH_RLNG_AV
 FROM (
 
--- Sum for WH_MON over last 4 DOS (4 because none in WH_MON = DOS_MON except maybe at end of month?)
-
+-- now at WH MON - push 3 month sum onto prev months
 SELECT 
 RUN_DATE, 
 CDE_ENTITY_MODEL, 
@@ -93,6 +91,7 @@ MAX(TOTAL_PAID_3MON) AS DOS_PAID_3MON
         
 FROM (
 
+-- Sum for WH_MON over last 4 DOS (4 because none in WH_MON = DOS_MON except maybe at end of month?)
 SELECT 
 RUN_DATE, 
 CDE_ENTITY_MODEL, 
@@ -121,6 +120,7 @@ TOTAL_PAID,
 
         
 FROM (
+-- core
 SELECT 
 RUN_DATE, 
 CDE_ENTITY_MODEL, 
@@ -213,7 +213,7 @@ ORDER BY RUN_DATE, CDE_ENTITY_MODEL, ENTITY_PIDSL, ENTITY_NAME, CLAIM_MCE, CLAIM
 
 
 
---------------
+---============
 -- add in 3 month windows - with WH_MON min fields
 
 

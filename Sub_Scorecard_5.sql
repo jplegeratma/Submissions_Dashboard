@@ -3,7 +3,7 @@
 CREATE TABLE WH_COUNTS_5_3
 AS
 
--- 8 month back 
+-- look for 8 month back 
 SELECT 
 RUN_DATE, 
 CDE_ENTITY_MODEL, 

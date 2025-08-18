@@ -217,7 +217,7 @@ CURRENT_DATE() AS RUN_DATE,
          left join mhteam.dwdq.INF_B_MCE_PIDSL_CROSSWALK cw on cw.mco = e.cde_enc_mco and cw.aco = e.cde_enc_aco            
          WHERE e.dos_from_dt >= '01-JAN-2022'
          AND e.IND_OFFSET = 'N'
---and E.CDE_ENC_ACO = 'BMC-BACO'
+         AND e.CDE_ENC_ACO != 'LAHEY'
 )
 GROUP BY RUN_DATE, 
          CDE_ENTITY_MODEL, 
@@ -277,4 +277,3 @@ GROUP BY RUN_DATE,
 )
 ORDER BY RUN_DATE, CDE_ENTITY_MODEL, ENTITY_PIDSL, ENTITY_NAME, CLAIM_MCE, CLAIM_ACO_MCE, WH_MON DESC
 ;
-

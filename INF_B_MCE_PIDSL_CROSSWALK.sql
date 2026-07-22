@@ -61,7 +61,7 @@ INSERT INTO INF_B_MCE_PIDSL_CROSSWALK (
 (NULL, 22, 'SCO', 'BHP', 'BHP', '#', '#', '110025617H', 'WELLSENSE SENIOR CARE OPTIONS PLAN', 'WellSense (formerly Boston Medical Center)'),
 (NULL, 23, 'SCO', 'CCA', 'CCA', '#', '#', '110031450A', 'COMMONWEALTH CARE ALLIANCE', 'Commonwealth Care Alliance'),
 (NULL, 24, 'SCO', 'NAV', 'NAV', '#', '#', '110031449E', 'FALLON HEALTH', 'Fallon Health'),
-(NULL, 25, 'SCO', 'SWH', 'SWH', '#', '#', '110031448A', 'SENIOR WHOLE HEALTH LLC', 'Senior Whole Health by Molina Healthcare'),
+(NULL, 25, 'SCO', 'SWH', 'SWH', '#', '#', '110031448A', 'SENIOR WHOLE HEALTH LLC', 'Senior Whole Health by Molina Healthcare SCO'),
 (NULL, 26, 'SCO', 'TFT', 'TFT', '#', '#', '110031470B', 'TUFTS HEALTH PLAN', 'Point32 / Tufts Health Plan'),
 (NULL, 27, 'SCO', 'UHC', 'UHC', '#', '#', '110031447A', 'UNITEDHEALTHCARE INSURANCE COMPANY', 'United Healthcare'),
 (NULL, 28, 'MBH', 'MBH', 'MBH', 'CCC', 'CCC', '110117145B', 'COMMUNITY CARE COOPERATIVE INC', 'sub Mass Behavioral Health Partnership'),
@@ -76,6 +76,9 @@ INSERT INTO INF_B_MCE_PIDSL_CROSSWALK (
 
 (NULL, 37, 'MCO', 'HNE', 'HNE', '#', '#', '110031464A', 'HEALTH NEW ENGLAND', 'Health New England'),
 (NULL, 38, 'MCO', 'NHP', 'NHP', '#', '#', '110031467A', 'NEIGHBORHOOD HEALTH PLAN-A', 'Neighborhood Health Plan'),
-('ACO-1', 39, 'ACOC', 'CHA', 'TFT', 'LAHEY', 'LAHEY', '110088791F', 'LAHEY MASSHEALTH ACO', 'Beth Israel Lahey Health')
+('ACO-1', 39, 'ACOC', 'CHA', 'TFT', 'LAHEY', 'LAHEY', '110088791F', 'LAHEY MASSHEALTH ACO', 'Beth Israel Lahey Health'),
 
+(NULL, 40, 'ICO', 'MHI', 'MHI', '#', '#', '110031448B', 'SENIOR WHOLE HEALTH LLC', 'Senior Whole Health by Molina Healthcare ICO'),
+(NULL, 41, 'ICO', 'MHI', 'MHI', '#', '#', '110031467I', 'MASS GENERAL BRIGHAM HEALTH PLAN INC', 'MASS GENERAL BRIGHAM HEALTH PLAN INC ICO'),
+(NULL, 42, 'SCO', 'MGH', 'MGH', '#', '#', '110031467H', 'MASS GENERAL BRIGHAM HEALTH PLAN INC', 'MASS GENERAL BRIGHAM HEALTH PLAN INC SCO')
 ;
